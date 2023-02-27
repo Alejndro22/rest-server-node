@@ -10,10 +10,18 @@ const isValidRole = async (role = '') => {
 // Verify if email already exists
 const isRegistered = async (email = '') => {
   const emailExists = await User.findOne({ email });
-  if (emailExists) throw new Error(`${email} is already registered in DB`);
+  if (emailExists)
+    throw new Error(`Email: ${email} is already registered in DB`);
+};
+
+const userExistsById = async (id = '') => {
+  const userExists = await User.findById(id);
+  if (!userExists)
+    throw new Error(`User with id: ${id} is not registered in DB`);
 };
 
 module.exports = {
   isValidRole,
   isRegistered,
+  userExistsById,
 };

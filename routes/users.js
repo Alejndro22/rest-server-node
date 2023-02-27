@@ -4,8 +4,8 @@ const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validate-fields');
 const {
   isValidRole,
-  emailExists,
   isRegistered,
+  userExistsById,
 } = require('../helpers/db-validators');
 
 const {
@@ -38,7 +38,16 @@ router.post(
 );
 
 // Parámetros de segmento
-router.put('/:id', putUsers);
+router.put(
+  '/:id',
+  [
+    check('id', 'This is not a valid id').isMongoId(),
+    check('id').custom(userExistsById),
+    check('role').custom(isValidRole),
+    validateFields,
+  ],
+  putUsers
+);
 
 router.patch('/', patchUsers);
 

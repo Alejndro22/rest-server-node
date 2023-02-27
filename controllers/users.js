@@ -20,19 +20,23 @@ const postUsers = async (req = request, res = response) => {
   // Save in DB
   await user.save();
 
-  res.status(201).json({
-    user,
-  });
+  res.status(201).json(user);
 };
 
 // Parámetros de segmento
-const putUsers = (req = request, res = response) => {
+const putUsers = async (req = request, res = response) => {
   const { id } = req.params;
+  const { _id, password, fromGoogle, email, ...remainder } = req.body;
 
-  res.status(400).json({
-    msg: 'put API - Controlador',
-    id,
-  });
+  if (password) {
+    // Encrypt password
+    const salt = bcryptjs.genSaltSync();
+    remainder.password = bcryptjs.hashSync(password, salt);
+  }
+
+  const user = await User.findByIdAndUpdate(id, remainder, { new: true });
+
+  res.status(200).json(user);
 };
 
 const patchUsers = (req = request, res = response) => {
