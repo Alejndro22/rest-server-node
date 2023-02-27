@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { check } = require('express-validator');
+const { check, query } = require('express-validator');
 
 const { validateFields } = require('../middlewares/validate-fields');
 const {
@@ -18,7 +18,15 @@ const {
 
 const router = Router();
 
-router.get('/', getUsers);
+router.get(
+  '/',
+  [
+    query('limit', 'Limit value must be a number').isNumeric().optional(),
+    query('from', 'From value must be a number').isNumeric().optional(),
+    validateFields,
+  ],
+  getUsers
+);
 
 router.post(
   '/',

@@ -3,9 +3,23 @@ const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
 
-const getUsers = (req = request, res = response) => {
+const getUsers = async (req = request, res = response) => {
+  const { limit = 5, from = 0 } = req.query;
+  const query = { state: true };
+
+  // const users = await User.find(query).skip(from).limit(limit);
+
+  // const total = await User.countDocuments(query);
+
+  // Se puede usar para lanzar peticiones asincronas de forma simultanes
+  const [total, users] = await Promise.all([
+    User.countDocuments(query),
+    User.find(query).skip(from).limit(limit),
+  ]);
+
   res.json({
-    msg: 'get API - Controlador',
+    total,
+    users,
   });
 };
 
