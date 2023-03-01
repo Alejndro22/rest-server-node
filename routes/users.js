@@ -1,12 +1,7 @@
 import { Router } from 'express';
 import { check, query } from 'express-validator';
 
-// const { Router } = require('express');
-// const { check, query } = require('express-validator');
-
 import { validateFields } from '../middlewares/validate-fields.js';
-
-// const { validateFields } = require('../middlewares/validate-fields');
 
 import {
   isValidRole,
@@ -21,20 +16,6 @@ import {
   patchUsers,
   deleteUsers,
 } from '../controllers/users.js';
-
-// const {
-//   isValidRole,
-//   isRegistered,
-//   userExistsById,
-// } = require('../helpers/db-validators');
-
-// const {
-//   getUsers,
-//   postUsers,
-//   putUsers,
-//   patchUsers,
-//   deleteUsers,
-// } = require('../controllers/users');
 
 const router = Router();
 
@@ -82,5 +63,4 @@ router.patch('/', patchUsers);
 // Parámetros de query
 router.delete('/', deleteUsers);
 
-// module.exports = router;
 export { router };

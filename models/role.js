@@ -1,4 +1,3 @@
-// const { Schema, model } = require('mongoose');
 import { Schema, model } from 'mongoose';
 
 const RoleSchema = Schema({
@@ -10,4 +9,3 @@ const RoleSchema = Schema({
 
 const Roles = model('Roles', RoleSchema);
 export default Roles;
-// module.exports = model('Roles', RoleSchema);

@@ -1,13 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 
-// const express = require('express');
-// var cors = require('cors');
-
 import { dbConnection } from '../database/config.js';
 import { router } from '../routes/users.js';
-
-// const { dbConnection } = require('../database/config');
 
 class Server {
   constructor() {
@@ -51,5 +46,4 @@ class Server {
   }
 }
 
-// module.exports = Server;
 export default Server;

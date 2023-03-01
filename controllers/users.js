@@ -2,17 +2,9 @@ import {} from 'express';
 import bcryptjs from 'bcryptjs';
 import Users from '../models/user.js';
 
-// const { response, request } = require('express');
-// const bcryptjs = require('bcryptjs');
-
-// const Users = require('../models/user');
-
 const getUsers = async (req = request, res = response) => {
   const { limit = 5, from = 0 } = req.query;
   const query = { state: true };
-
-  // const users = await Users.find(query).skip(from).limit(limit);
-  // const total = await Users.countDocuments(query);
 
   // Se puede usar para lanzar peticiones asincronas de forma simultanes
   const [total, users] = await Promise.all([

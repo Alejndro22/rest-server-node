@@ -1,9 +1,6 @@
 import Roles from '../models/role.js';
 import Users from '../models/user.js';
 
-// const Roles = require('../models/role');
-// const Users = require('../models/user');
-
 // Check if role exists in DB
 const isValidRole = async (role = '') => {
   const roleExists = await Roles.findOne({ role });
