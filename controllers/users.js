@@ -54,18 +54,15 @@ const patchUsers = (req = request, res = response) => {
   });
 };
 
-// Parámetros de query
-const deleteUsers = (req = request, res = response) => {
-  const { q, nombre = 'No name', apiKey, page = 1, limit } = req.query;
+const deleteUsers = async (req = request, res = response) => {
+  const { id } = req.params;
+  // Actually Delete from DB
+  // const user = await Users.findByIdAndDelete(id);
 
-  res.json({
-    msg: 'delete API - Controlador',
-    q,
-    nombre,
-    apiKey,
-    page,
-    limit,
-  });
+  // Change user state
+  const user = await Users.findByIdAndUpdate(id, { state: false });
+
+  res.json(user);
 };
 
 export { getUsers, postUsers, putUsers, patchUsers, deleteUsers };

@@ -60,7 +60,14 @@ router.put(
 
 router.patch('/', patchUsers);
 
-// Parámetros de query
-router.delete('/', deleteUsers);
+router.delete(
+  '/:id',
+  [
+    check('id', 'This is not a valid id').isMongoId(),
+    check('id').custom(userExistsById),
+    validateFields,
+  ],
+  deleteUsers
+);
 
 export { router };
