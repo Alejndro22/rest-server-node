@@ -1,20 +1,23 @@
-const { response, request } = require('express');
-const bcryptjs = require('bcryptjs');
+import {} from 'express';
+import bcryptjs from 'bcryptjs';
+import Users from '../models/user.js';
 
-const User = require('../models/user');
+// const { response, request } = require('express');
+// const bcryptjs = require('bcryptjs');
+
+// const Users = require('../models/user');
 
 const getUsers = async (req = request, res = response) => {
   const { limit = 5, from = 0 } = req.query;
   const query = { state: true };
 
-  // const users = await User.find(query).skip(from).limit(limit);
-
-  // const total = await User.countDocuments(query);
+  // const users = await Users.find(query).skip(from).limit(limit);
+  // const total = await Users.countDocuments(query);
 
   // Se puede usar para lanzar peticiones asincronas de forma simultanes
   const [total, users] = await Promise.all([
-    User.countDocuments(query),
-    User.find(query).skip(from).limit(limit),
+    Users.countDocuments(query),
+    Users.find(query).skip(from).limit(limit),
   ]);
 
   res.json({
@@ -25,7 +28,7 @@ const getUsers = async (req = request, res = response) => {
 
 const postUsers = async (req = request, res = response) => {
   const { name, email, password, role } = req.body;
-  const user = new User({ name, email, password, role });
+  const user = new Users({ name, email, password, role });
 
   // Encrypt password
   const salt = bcryptjs.genSaltSync();
@@ -48,7 +51,7 @@ const putUsers = async (req = request, res = response) => {
     remainder.password = bcryptjs.hashSync(password, salt);
   }
 
-  const user = await User.findByIdAndUpdate(id, remainder, { new: true });
+  const user = await Users.findByIdAndUpdate(id, remainder, { new: true });
 
   res.status(200).json(user);
 };
@@ -73,10 +76,4 @@ const deleteUsers = (req = request, res = response) => {
   });
 };
 
-module.exports = {
-  getUsers,
-  postUsers,
-  putUsers,
-  patchUsers,
-  deleteUsers,
-};
+export { getUsers, postUsers, putUsers, patchUsers, deleteUsers };

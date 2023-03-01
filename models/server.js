@@ -1,6 +1,13 @@
-const express = require('express');
-var cors = require('cors');
-const { dbConnection } = require('../database/config');
+import express from 'express';
+import cors from 'cors';
+
+// const express = require('express');
+// var cors = require('cors');
+
+import { dbConnection } from '../database/config.js';
+import { router } from '../routes/users.js';
+
+// const { dbConnection } = require('../database/config');
 
 class Server {
   constructor() {
@@ -34,7 +41,7 @@ class Server {
   }
 
   routes() {
-    this.app.use(this.usersRoutePath, require('../routes/users'));
+    this.app.use(this.usersRoutePath, router);
   }
 
   listen() {
@@ -44,4 +51,5 @@ class Server {
   }
 }
 
-module.exports = Server;
+// module.exports = Server;
+export default Server;

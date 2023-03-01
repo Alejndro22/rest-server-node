@@ -1,5 +1,8 @@
-const Roles = require('../models/role');
-const User = require('../models/user');
+import Roles from '../models/role.js';
+import Users from '../models/user.js';
+
+// const Roles = require('../models/role');
+// const Users = require('../models/user');
 
 // Check if role exists in DB
 const isValidRole = async (role = '') => {
@@ -9,19 +12,15 @@ const isValidRole = async (role = '') => {
 
 // Verify if email already exists
 const isRegistered = async (email = '') => {
-  const emailExists = await User.findOne({ email });
+  const emailExists = await Users.findOne({ email });
   if (emailExists)
     throw new Error(`Email: ${email} is already registered in DB`);
 };
 
 const userExistsById = async (id = '') => {
-  const userExists = await User.findById(id);
+  const userExists = await Users.findById(id);
   if (!userExists)
-    throw new Error(`User with id: ${id} is not registered in DB`);
+    throw new Error(`Users with id: ${id} is not registered in DB`);
 };
 
-module.exports = {
-  isValidRole,
-  isRegistered,
-  userExistsById,
-};
+export { isValidRole, isRegistered, userExistsById };
