@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { check, query } from 'express-validator';
 
 import { validateFields } from '../middlewares/validate-fields.js';
+import { validateJWT } from '../middlewares/validate-jwt.js';
 
 import {
   isValidRole,
@@ -63,6 +64,7 @@ router.patch('/', patchUsers);
 router.delete(
   '/:id',
   [
+    validateJWT,
     check('id', 'This is not a valid id').isMongoId(),
     check('id').custom(userExistsById),
     validateFields,
@@ -70,4 +72,4 @@ router.delete(
   deleteUsers
 );
 
-export { router };
+export { router as userRouter };
