@@ -3,7 +3,7 @@ import { check, query } from 'express-validator';
 
 import { validateFields } from '../middlewares/validate-fields.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
-import { isAdminRole } from '../middlewares/validate-roles.js';
+import { hasExpectedRole, isAdminRole } from '../middlewares/validate-roles.js';
 
 import {
   isValidRole,
@@ -66,7 +66,8 @@ router.delete(
   '/:id',
   [
     validateJWT,
-    isAdminRole,
+    // isAdminRole,
+    hasExpectedRole('ADMIN_ROLE', 'VENTAS_ROLE'),
     check('id', 'This is not a valid id').isMongoId(),
     check('id').custom(userExistsById),
     validateFields,
