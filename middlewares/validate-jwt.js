@@ -1,6 +1,6 @@
 import { request, response } from 'express';
 import jwt from 'jsonwebtoken';
-import Users from '../models/user.js';
+import User from '../models/user.js';
 
 const validateJWT = async (req = request, res = response, next) => {
   const token = req.header('x-token');
@@ -14,7 +14,7 @@ const validateJWT = async (req = request, res = response, next) => {
   try {
     const { uid } = jwt.verify(token, process.env.SECRETORPUBLICKEY);
     // Get who made the request
-    const requestFrom = await Users.findById(uid);
+    const requestFrom = await User.findById(uid);
 
     // Ceck if uid belongs to a user
     if (!requestFrom) {

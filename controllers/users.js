@@ -1,6 +1,6 @@
 import {} from 'express';
 import bcryptjs from 'bcryptjs';
-import Users from '../models/user.js';
+import User from '../models/user.js';
 
 const getUsers = async (req = request, res = response) => {
   const { limit = 5, from = 0 } = req.query;
@@ -8,8 +8,8 @@ const getUsers = async (req = request, res = response) => {
 
   // Se puede usar para lanzar peticiones asincronas de forma simultanes
   const [total, users] = await Promise.all([
-    Users.countDocuments(query),
-    Users.find(query).skip(from).limit(limit),
+    User.countDocuments(query),
+    User.find(query).skip(from).limit(limit),
   ]);
 
   res.json({
@@ -20,7 +20,7 @@ const getUsers = async (req = request, res = response) => {
 
 const postUsers = async (req = request, res = response) => {
   const { name, email, password, role } = req.body;
-  const user = new Users({ name, email, password, role });
+  const user = new User({ name, email, password, role });
 
   // Encrypt password
   const salt = bcryptjs.genSaltSync();
@@ -43,7 +43,7 @@ const putUsers = async (req = request, res = response) => {
     remainder.password = bcryptjs.hashSync(password, salt);
   }
 
-  const user = await Users.findByIdAndUpdate(id, remainder, { new: true });
+  const user = await User.findByIdAndUpdate(id, remainder, { new: true });
 
   res.status(200).json(user);
 };
@@ -57,10 +57,14 @@ const patchUsers = (req = request, res = response) => {
 const deleteUsers = async (req = request, res = response) => {
   const { id } = req.params;
   // Actually Delete from DB
-  // const user = await Users.findByIdAndDelete(id);
+  // const user = await User.findByIdAndDelete(id);
 
   // Change user state
-  const user = await Users.findByIdAndUpdate(id, { state: false });
+  const user = await User.findByIdAndUpdate(
+    id,
+    { state: false },
+    { new: true }
+  );
 
   res.json(user);
 };

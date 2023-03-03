@@ -1,6 +1,6 @@
 import { json, response } from 'express';
 import bcryptjs from 'bcryptjs';
-import Users from '../models/user.js';
+import User from '../models/user.js';
 import { generateJWT } from '../helpers/generate-jwt.js';
 import { googleVerify } from '../helpers/google-verify.js';
 
@@ -8,7 +8,7 @@ const login = async (req, res = response) => {
   const { email, password } = req.body;
 
   try {
-    const user = await Users.findOne({ email });
+    const user = await User.findOne({ email });
 
     // Verify if email is registered
     if (!user)
@@ -50,7 +50,7 @@ const googleSignIn = async (req, res = response) => {
   try {
     const { name, picture, email } = await googleVerify(id_token);
 
-    let user = await Users.findOne({ email });
+    let user = await User.findOne({ email });
 
     // Check if user is already register  ed
     if (!user) {
@@ -62,7 +62,7 @@ const googleSignIn = async (req, res = response) => {
         fromGoogle: true,
       };
 
-      user = new Users(data);
+      user = new User(data);
       await user.save();
     }
 
