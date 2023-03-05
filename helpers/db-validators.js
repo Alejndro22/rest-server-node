@@ -1,4 +1,4 @@
-import { Category, Role, User } from '../models/index.js';
+import { Category, Product, Role, User } from '../models/index.js';
 
 /**
  *
@@ -30,13 +30,15 @@ const userExistsById = async (id = '') => {
  */
 
 // Verify if category already exists in DB
-const categoryRegistered = async (category = '') => {
+const categoryRegistered = async (category = '', { req }) => {
   const name = category.toUpperCase();
   const categoryExists = await Category.findOne({
     name,
   });
   if (categoryExists)
-    throw new Error(`Category: ${name} is already registered in DB`);
+    if (categoryExists._id != req.params.id) {
+      throw new Error(`Category: ${name} is already registered in DB`);
+    }
 };
 
 // Check if category exists in DB
@@ -46,10 +48,38 @@ const categoryExistsById = async (id = '') => {
     throw new Error(`Category with id: ${id} is not registered in DB`);
 };
 
+/**
+ *
+ * Product validators
+ */
+
+// Verify if product already exists in DB
+const productRegistered = async (product = '', { req }) => {
+  const name = product.toUpperCase();
+  const productExists = await Product.findOne({
+    name,
+  });
+
+  if (productExists) {
+    if (productExists._id != req.params.id) {
+      throw new Error(`Product: ${name} is already registered in DB`);
+    }
+  }
+};
+
+// Check if product exists in DB
+const productExistsById = async (id = '') => {
+  const product = await Product.findById(id);
+  if (!product)
+    throw new Error(`Product with id: ${id} is not registered in DB`);
+};
+
 export {
   isValidRole,
   isRegistered,
   userExistsById,
   categoryRegistered,
   categoryExistsById,
+  productRegistered,
+  productExistsById,
 };
