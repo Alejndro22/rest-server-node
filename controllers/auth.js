@@ -66,7 +66,7 @@ const googleSignIn = async (req, res = response) => {
       await user.save();
     }
 
-    // If user state is falle
+    // If user state is falsle
     if (!user.state) {
       return res.status(401).json({
         msg: 'This user was deleted from db, please talk with DBA',

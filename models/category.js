@@ -4,6 +4,7 @@ const CategorySchema = Schema({
   name: {
     type: String,
     required: [true, 'Category name is required'],
+    unique: true,
   },
   status: {
     type: Boolean,
@@ -16,6 +17,11 @@ const CategorySchema = Schema({
     required: true,
   },
 });
+
+CategorySchema.methods.toJSON = function () {
+  const { __v, ...category } = this.toObject();
+  return category;
+};
 
 const Category = model('Category', CategorySchema);
 export default Category;

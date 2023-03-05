@@ -1,5 +1,9 @@
-import Role from '../models/role.js';
-import User from '../models/user.js';
+import { Category, Role, User } from '../models/index.js';
+
+/**
+ *
+ * User validators
+ */
 
 // Check if role exists in DB
 const isValidRole = async (role = '') => {
@@ -20,4 +24,32 @@ const userExistsById = async (id = '') => {
     throw new Error(`User with id: ${id} is not registered in DB`);
 };
 
-export { isValidRole, isRegistered, userExistsById };
+/**
+ *
+ * Category validators
+ */
+
+// Verify if category already exists in DB
+const categoryRegistered = async (category = '') => {
+  const name = category.toUpperCase();
+  const categoryExists = await Category.findOne({
+    name,
+  });
+  if (categoryExists)
+    throw new Error(`Category: ${name} is already registered in DB`);
+};
+
+// Check if category exists in DB
+const categoryExistsById = async (id = '') => {
+  const category = await Category.findById(id);
+  if (!category)
+    throw new Error(`Category with id: ${id} is not registered in DB`);
+};
+
+export {
+  isValidRole,
+  isRegistered,
+  userExistsById,
+  categoryRegistered,
+  categoryExistsById,
+};
