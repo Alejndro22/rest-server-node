@@ -6,6 +6,7 @@ import {
   userRouter,
   authRouter,
   categoriesRouter,
+  searchRouter,
   productsRouter,
 } from '../routes/index.js';
 
@@ -18,6 +19,7 @@ class Server {
       auth: '/api/auth',
       categories: '/api/categories',
       products: '/api/products',
+      search: '/api/search',
       users: '/api/users',
     };
 
@@ -50,6 +52,7 @@ class Server {
     this.app.use(this.paths.auth, authRouter);
     this.app.use(this.paths.categories, categoriesRouter);
     this.app.use(this.paths.products, productsRouter);
+    this.app.use(this.paths.search, searchRouter);
     this.app.use(this.paths.users, userRouter);
   }
 
