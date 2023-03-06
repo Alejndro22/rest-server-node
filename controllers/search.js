@@ -119,4 +119,23 @@ const search = (req, res = response) => {
   }
 };
 
-export { search };
+const searchProductsByCategory = async (req, res = response) => {
+  const { category } = req.params;
+
+  const [total, products, catego] = await Promise.all([
+    Product.countDocuments({
+      category: Types.ObjectId(category),
+      status: true,
+    }),
+    Product.find({ category: Types.ObjectId(category), status: true }),
+    Category.findById(category),
+  ]);
+
+  return res.json({
+    total,
+    category: catego,
+    results: products,
+  });
+};
+
+export { search, searchProductsByCategory };
