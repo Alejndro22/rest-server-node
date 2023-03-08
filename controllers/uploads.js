@@ -62,4 +62,46 @@ const updateImage = async (req, res = response) => {
   });
 };
 
-export { upload, updateImage };
+const showImage = async (req, res = response) => {
+  const { collection, id } = req.params;
+  let model;
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+  switch (collection) {
+    case 'users':
+      model = await User.findById(id);
+      if (!model) {
+        return res.status(400).json({ msg: `Theres no user with id ${id}` });
+      }
+      break;
+
+    case 'products':
+      model = await Product.findById(id);
+      if (!model) {
+        return res.status(400).json({ msg: `Theres no product with id ${id}` });
+      }
+      break;
+
+    default:
+      return res.json({
+        msg: 'This collection was not expected, not validation for this',
+      });
+  }
+
+  // Before uploading file, delete prev img
+  try {
+    if (model.img) {
+      const imgPath = path.join(__dirname, '../uploads', collection, model.img);
+      if (fs.existsSync(imgPath)) {
+        return res.sendFile(imgPath);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  const imgPath = path.join(__dirname, '../assets', 'no-image.jpg');
+  res.sendFile(imgPath);
+};
+
+export { upload, updateImage, showImage };
