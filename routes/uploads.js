@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { showImage, updateImage, upload } from '../controllers/uploads.js';
+import {
+  showImage,
+  updateImageCloudinary,
+  upload,
+} from '../controllers/uploads.js';
 import { allowedCollections } from '../helpers/index.js';
 import { validateFields, validateFileToUpload } from '../middlewares/index.js';
 
@@ -18,7 +22,7 @@ router.put(
     ),
     validateFields,
   ],
-  updateImage
+  updateImageCloudinary
 );
 
 router.get(

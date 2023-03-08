@@ -1,9 +1,22 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { response } from 'express';
 import { fileURLToPath } from 'url';
+
+import * as Cloudinary from 'cloudinary';
+
 import { uploadFile } from '../helpers/index.js';
 import { Product, User } from '../models/index.js';
+
+Cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
 
 const upload = async (req, res = response) => {
   try {
@@ -104,4 +117,55 @@ const showImage = async (req, res = response) => {
   res.sendFile(imgPath);
 };
 
-export { upload, updateImage, showImage };
+const updateImageCloudinary = async (req, res = response) => {
+  const { collection, id } = req.params;
+  let model;
+
+  switch (collection) {
+    case 'users':
+      model = await User.findById(id);
+      if (!model) {
+        return res.status(400).json({ msg: `Theres no user with id ${id}` });
+      }
+      break;
+
+    case 'products':
+      model = await Product.findById(id);
+      if (!model) {
+        return res.status(400).json({ msg: `Theres no product with id ${id}` });
+      }
+      break;
+
+    default:
+      return res.json({
+        msg: 'This collection was not expected, not validation for this',
+      });
+  }
+
+  // Before uploading file, delete prev img
+
+  if (model.img) {
+    const nameArr = model.img.split('/');
+    const name = nameArr[nameArr.length - 1];
+    const [public_id] = name.split('.');
+    Cloudinary.v2.uploader.destroy(`cafeDB/${public_id}`);
+  }
+
+  const options = {
+    unique_filename: true,
+    folder: 'cafeDB',
+  };
+
+  const { tempFilePath } = req.files.file;
+  const { secure_url } = await Cloudinary.v2.uploader.upload(
+    tempFilePath,
+    options
+  );
+
+  model.img = secure_url;
+  await model.save();
+
+  res.json(model);
+};
+
+export { upload, updateImage, updateImageCloudinary, showImage };
