@@ -74,6 +74,20 @@ const productExistsById = async (id = '') => {
     throw new Error(`Product with id: ${id} is not registered in DB`);
 };
 
+/**
+ *
+ * Validate collections
+ */
+const allowedCollections = async (collection = '', allowedArray = []) => {
+  const allowed = allowedArray.includes(collection);
+  if (!allowed)
+    throw new Error(
+      `Collection: ${collection} is not allowed, the ones allowed are: [ ${allowedArray} ]`
+    );
+
+  return true;
+};
+
 export {
   isValidRole,
   isRegistered,
@@ -82,4 +96,5 @@ export {
   categoryExistsById,
   productRegistered,
   productExistsById,
+  allowedCollections,
 };
