@@ -1,44 +1,51 @@
-const { response, request } = require('express');
-const bcryptjs = require('bcryptjs');
+import {} from 'express';
+import bcryptjs from 'bcryptjs';
+import { User } from '../models/index.js';
 
-const Usuario = require('../models/user');
+const getUsers = async (req = request, res = response) => {
+  const { limit = 5, from = 0 } = req.query;
+  const query = { state: true };
 
-const getUsers = (req = request, res = response) => {
+  // Se puede usar para lanzar peticiones asincronas de forma simultanes
+  const [total, users] = await Promise.all([
+    User.countDocuments(query),
+    User.find(query).skip(from).limit(limit),
+  ]);
+
   res.json({
-    msg: 'get API - Controlador',
+    total,
+    users,
   });
 };
 
 const postUsers = async (req = request, res = response) => {
   const { name, email, password, role } = req.body;
-  const usuario = new Usuario({ name, email, password, role });
-
-  // Verify if email already exists
-  const emailExists = await Usuario.findOne({ email });
-  if (emailExists)
-    return res.status(404).json({ msg: 'This email is already registered' });
+  const user = new User({ name, email, password, role });
 
   // Encrypt password
   const salt = bcryptjs.genSaltSync();
-  usuario.password = bcryptjs.hashSync(password, salt);
+  user.password = bcryptjs.hashSync(password, salt);
 
   // Save in DB
-  await usuario.save();
+  await user.save();
 
-  res.status(201).json({
-    msg: 'post API - Controlador',
-    usuario,
-  });
+  res.status(201).json(user);
 };
 
 // Parámetros de segmento
-const putUsers = (req = request, res = response) => {
+const putUsers = async (req = request, res = response) => {
   const { id } = req.params;
+  const { _id, password, fromGoogle, email, ...remainder } = req.body;
 
-  res.status(400).json({
-    msg: 'put API - Controlador',
-    id,
-  });
+  if (password) {
+    // Encrypt password
+    const salt = bcryptjs.genSaltSync();
+    remainder.password = bcryptjs.hashSync(password, salt);
+  }
+
+  const user = await User.findByIdAndUpdate(id, remainder, { new: true });
+
+  res.status(200).json(user);
 };
 
 const patchUsers = (req = request, res = response) => {
@@ -47,24 +54,19 @@ const patchUsers = (req = request, res = response) => {
   });
 };
 
-// Parámetros de query
-const deleteUsers = (req = request, res = response) => {
-  const { q, nombre = 'No name', apiKey, page = 1, limit } = req.query;
+const deleteUsers = async (req = request, res = response) => {
+  const { id } = req.params;
+  // Actually Delete from DB
+  // const user = await User.findByIdAndDelete(id);
 
-  res.json({
-    msg: 'delete API - Controlador',
-    q,
-    nombre,
-    apiKey,
-    page,
-    limit,
-  });
+  // Change user state
+  const user = await User.findByIdAndUpdate(
+    id,
+    { state: false },
+    { new: true }
+  );
+
+  res.json(user);
 };
 
-module.exports = {
-  getUsers,
-  postUsers,
-  putUsers,
-  patchUsers,
-  deleteUsers,
-};
+export { getUsers, postUsers, putUsers, patchUsers, deleteUsers };
